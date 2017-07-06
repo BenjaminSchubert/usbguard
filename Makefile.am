@@ -529,6 +529,8 @@ usbguard_applet_qt_SOURCES_BASE=\
 	src/GUI.Qt/DeviceModel.h \
 	src/GUI.Qt/SessionBlocker.cpp \
 	src/GUI.Qt/SessionBlocker.h \
+	src/GUI.Qt/SingleInstanceManager.cpp \
+	src/GUI.Qt/SingleInstanceManager.h \
 	src/GUI.Qt/TargetDelegate.cpp \
 	src/GUI.Qt/TargetDelegate.h \
 	src/GUI.Qt/backend/AbstractBackend.h \
@@ -573,6 +575,7 @@ CLEANFILES +=\
 	$(top_builddir)/src/GUI.Qt/usbguard.qrc \
 	$(top_builddir)/src/GUI.Qt/DeviceModel.moc.cpp \
 	$(top_builddir)/src/GUI.Qt/SessionBlocker.moc.cpp \
+	$(top_builddir)/src/GUI.Qt/SingleInstanceManager.moc.cpp \
 	$(top_builddir)/src/GUI.Qt/TargetDelegate.moc.cpp \
 	$(top_builddir)/src/GUI.Qt/backend/AbstractBackend.moc.cpp \
 	$(top_builddir)/src/GUI.Qt/backend/DBusBackend.moc.cpp \
@@ -585,6 +588,7 @@ nodist_usbguard_applet_qt_SOURCES=\
 	src/GUI.Qt/usbguard.qrc.cpp \
 	src/GUI.Qt/DeviceModel.moc.cpp \
 	src/GUI.Qt/SessionBlocker.moc.cpp \
+	src/GUI.Qt/SingleInstanceManager.moc.cpp \
 	src/GUI.Qt/TargetDelegate.moc.cpp \
 	src/GUI.Qt/backend/AbstractBackend.moc.cpp \
 	src/GUI.Qt/backend/DBusBackend.moc.cpp \

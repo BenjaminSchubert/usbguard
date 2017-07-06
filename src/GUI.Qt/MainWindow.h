@@ -22,6 +22,7 @@
 #endif
 
 #include "DeviceModel.h"
+#include "SingleInstanceManager.h"
 #include "TargetDelegate.h"
 #include "notifications/DBusNotifier.h"
 #include "backend/DBusBackend.h"
@@ -41,7 +42,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
+  explicit MainWindow(SingleInstanceManager &instanceManager, QWidget *parent = 0);
   ~MainWindow();
 
 signals:
@@ -99,6 +100,17 @@ protected slots:
   void setupSettingsWatcher();
   void startFlashing();
   void stopFlashing();
+
+  /*
+    Handle the action given by the Single Instance Manager.
+
+    This allows other instance of this program to send messages to the application
+    in order, for instance, to show its foreground without launching a second instance.
+
+    @param action Action requested by the manager.
+    @param data Additional data that might be useful.
+  */
+  void handleManagerAction(SingleInstanceManager::Action action, QByteArray &data);
 
 private:
   Ui::MainWindow *ui;

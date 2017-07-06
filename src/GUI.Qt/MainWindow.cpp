@@ -45,7 +45,7 @@
 #include <QWindowStateChangeEvent>
 #pragma GCC diagnostic pop
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(SingleInstanceManager &instanceManager, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     _settings("USBGuard", "usbguard-applet-qt"),
@@ -98,6 +98,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   QObject::connect(&_backend, SIGNAL(backendDisconnected()),
                    this, SLOT(handleBackendDisconnect()));
+
+  QObject::connect(&instanceManager, SIGNAL(actionRequired(SingleInstanceManager::Action, QByteArray &)),
+                   this, SLOT(handleManagerAction(SingleInstanceManager::Action, QByteArray &)));
 
   /*
    * loadSettings has to be called before setupSettingsWatcher! Otherwise it
@@ -693,6 +696,17 @@ void MainWindow::notifyFailure(std::string function, std::string message) {
               .arg(QString::fromStdString(function))
               .arg(QString::fromStdString(message)),
               /*alert=*/true);
+}
+
+void MainWindow::handleManagerAction(SingleInstanceManager::Action action, QByteArray &) {
+  switch (action) {
+    case SingleInstanceManager::Action::Show:
+      showNormal();
+      break;
+    case SingleInstanceManager::Action::NOOP:
+    default:
+      break;
+  }
 }
 
 
