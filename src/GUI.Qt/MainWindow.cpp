@@ -78,7 +78,6 @@ MainWindow::MainWindow(SingleInstanceManager &instanceManager, QWidget *parent) 
   setWindowTitle("USBGuard");
   setWindowIcon(QIcon(":/usbguard-icon.svg"));
   setWindowState(Qt::WindowMinimized);
-  setupSystemTray();
 
   qRegisterMetaType<usbguard::DeviceManager::EventType>("usbguard::DeviceManager::EventType");
   qRegisterMetaType<usbguard::Rule::Target>("usbguard::Rule::Target");
@@ -109,6 +108,9 @@ MainWindow::MainWindow(SingleInstanceManager &instanceManager, QWidget *parent) 
   loadSettings();
   setupSettingsWatcher();
 
+  // setupSystemTray depnds on the settings so it has to be called after loadSettings
+  setupSystemTray();
+
   _backend_timer.setInterval(1000);
   _backend_timer.start();
   ui->statusBar->showMessage(tr("Inactive. No %1 connection.").arg(_backend.type()));
@@ -129,8 +131,11 @@ void MainWindow::setupSystemTray()
   QObject::connect(systray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                    this, SLOT(switchVisibilityState(QSystemTrayIcon::ActivationReason)));
   QObject::connect(&_flash_timer, SIGNAL(timeout()),
-                   this, SLOT(flashStep()));    
-  systray->show();
+                   this, SLOT(flashStep()));
+
+  if (ui->show_icon->isChecked()) {
+    systray->show();
+  }
 }
 
 void MainWindow::setupSettingsWatcher()
@@ -405,7 +410,9 @@ void MainWindow::flashStep()
 {
   if (_flash_state) {
     systray->setIcon(QIcon(":/usbguard-icon-warning.svg"));
-    systray->show();
+    if (ui->show_icon->isChecked()) {
+      systray->show();
+    }
     _flash_timer.setInterval(250);
     _flash_state = false;
   }
@@ -416,7 +423,9 @@ void MainWindow::flashStep()
     else {
       systray->setIcon(QIcon(":/usbguard-icon-inactive.svg"));
     }
-    systray->show();
+    if (ui->show_icon->isChecked()) {
+      systray->show();
+    }
     _flash_timer.setInterval(500);
     _flash_state = true;
   }
@@ -558,6 +567,10 @@ void MainWindow::loadSettings()
   ui->mask_serial_checkbox->setChecked(_settings.value("MaskSerialNumber", true).toBool());
 
   _settings.endGroup();
+
+  _settings.beginGroup("Miscellaneous");
+  ui->show_icon->setChecked(_settings.value("ShowIcon", true).toBool());
+  _settings.endGroup();
 }
 
 void MainWindow::saveSettings()
@@ -584,7 +597,21 @@ void MainWindow::saveSettings()
   _settings.setValue("RandomizeWindowPosition", ui->randomize_position_checkbox->isChecked());
   _settings.setValue("MaskSerialNumber", ui->mask_serial_checkbox->isChecked());
   _settings.endGroup();
+
+  _settings.beginGroup("Miscellaneous");
+  _settings.setValue("ShowIcon", ui->show_icon->isChecked());
+  _settings.endGroup();
+
   _settings.sync();
+
+  // FIXME: the name of the function is not very good for doing this here.
+  // Should we rename the function or extract it ?
+  if (ui->show_icon->isChecked()) {
+    systray->show();
+  }
+  else {
+    systray->hide();
+  }
 }
 
 void MainWindow::loadDeviceList()
