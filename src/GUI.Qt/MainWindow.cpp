@@ -45,7 +45,7 @@
 #include <QWindowStateChangeEvent>
 #pragma GCC diagnostic pop
 
-MainWindow::MainWindow(SingleInstanceManager &instanceManager, QWidget *parent) :
+MainWindow::MainWindow(SingleInstanceManager &instanceManager, bool inBackground, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     _settings("USBGuard", "usbguard-applet-qt"),
@@ -77,7 +77,13 @@ MainWindow::MainWindow(SingleInstanceManager &instanceManager, QWidget *parent) 
 
   setWindowTitle("USBGuard");
   setWindowIcon(QIcon(":/usbguard-icon.svg"));
-  setWindowState(Qt::WindowMinimized);
+
+  if (inBackground) {
+    setWindowState(Qt::WindowMinimized);
+  }
+  else {
+    showNormal();
+  }
 
   qRegisterMetaType<usbguard::DeviceManager::EventType>("usbguard::DeviceManager::EventType");
   qRegisterMetaType<usbguard::Rule::Target>("usbguard::Rule::Target");

@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
     const SessionBlocker block(a);
 
-    MainWindow w(instanceManager);
+    MainWindow w(instanceManager, params.background);
     a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }

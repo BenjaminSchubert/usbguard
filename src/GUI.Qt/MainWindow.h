@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  explicit MainWindow(SingleInstanceManager &instanceManager, QWidget *parent = 0);
+  explicit MainWindow(SingleInstanceManager &instanceManager, bool inBackground = false, QWidget *parent = 0);
   ~MainWindow();
 
 signals:
